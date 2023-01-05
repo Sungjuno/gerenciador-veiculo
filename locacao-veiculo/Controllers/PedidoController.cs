@@ -9,80 +9,90 @@ using locacao_veiculo;
 
 namespace locacao_veiculo.Controllers
 {
-    public class CarroController : Controller
+    public class PedidoController : Controller
     {
         private readonly GERVEICULOSContext _context;
 
-        public CarroController(GERVEICULOSContext context)
+        public PedidoController(GERVEICULOSContext context)
         {
             _context = context;
         }
 
+        // GET: Pedido
         public async Task<IActionResult> Index()
         {
-            var gERVEICULOSContext = _context.Carros.Include(c => c.Cliente);
+            var gERVEICULOSContext = _context.Pedidos.Include(p => p.Cliente);
             return View(await gERVEICULOSContext.ToListAsync());
         }
 
+        // GET: Pedido/Details/5
         public async Task<IActionResult> Details(int? id)
         {
-            if (id == null || _context.Carros == null)
+            if (id == null || _context.Pedidos == null)
             {
                 return NotFound();
             }
 
-            var carro = await _context.Carros
-                .Include(c => c.Cliente)
+            var pedido = await _context.Pedidos
+                .Include(p => p.Cliente)
                 .FirstOrDefaultAsync(m => m.Id == id);
-            if (carro == null)
+            if (pedido == null)
             {
                 return NotFound();
             }
 
-            return View(carro);
+            return View(pedido);
         }
 
+        // GET: Pedido/Create
         public IActionResult Create()
         {
             ViewData["ClienteId"] = new SelectList(_context.Clientes, "Id", "Id");
             return View();
         }
 
+        // POST: Pedido/Create
+        // To protect from overposting attacks, enable the specific properties you want to bind to.
+        // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create([Bind("Id,Nome,Marca,Modelo,ClienteId")] Carro carro)
+        public async Task<IActionResult> Create([Bind("Id,IdCliente,Carro,DataLocacao,DataEntrega,ClienteId")] Pedido pedido)
         {
             if (ModelState.IsValid)
             {
-                _context.Add(carro);
+                _context.Add(pedido);
                 await _context.SaveChangesAsync();
                 return RedirectToAction(nameof(Index));
             }
-            ViewData["ClienteId"] = new SelectList(_context.Clientes, "Id", "Id", carro.ClienteId);
-            return View(carro);
+            ViewData["ClienteId"] = new SelectList(_context.Clientes, "Id", "Id", pedido.ClienteId);
+            return View(pedido);
         }
 
+        // GET: Pedido/Edit/5
         public async Task<IActionResult> Edit(int? id)
         {
-            if (id == null || _context.Carros == null)
+            if (id == null || _context.Pedidos == null)
             {
                 return NotFound();
             }
 
-            var carro = await _context.Carros.FindAsync(id);
-            if (carro == null)
+            var pedido = await _context.Pedidos.FindAsync(id);
+            if (pedido == null)
             {
                 return NotFound();
             }
-            ViewData["ClienteId"] = new SelectList(_context.Clientes, "Id", "Id", carro.ClienteId);
-            return View(carro);
+            ViewData["ClienteId"] = new SelectList(_context.Clientes, "Id", "Id", pedido.ClienteId);
+            return View(pedido);
         }
 
+        // POST: Pedido/Edit/5
+        // To protect from overposting attacks, enable the specific properties you want to bind to.
+        // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit(int id, [Bind("Id,Nome,Marca,Modelo,ClienteId")] Carro carro)
+        public async Task<IActionResult> Edit(int id, [Bind("Id,IdCliente,Carro,DataLocacao,DataEntrega,ClienteId")] Pedido pedido)
         {
-            if (id != carro.Id)
+            if (id != pedido.Id)
             {
                 return NotFound();
             }
@@ -91,12 +101,12 @@ namespace locacao_veiculo.Controllers
             {
                 try
                 {
-                    _context.Update(carro);
+                    _context.Update(pedido);
                     await _context.SaveChangesAsync();
                 }
                 catch (DbUpdateConcurrencyException)
                 {
-                    if (!CarroExists(carro.Id))
+                    if (!PedidoExists(pedido.Id))
                     {
                         return NotFound();
                     }
@@ -107,49 +117,51 @@ namespace locacao_veiculo.Controllers
                 }
                 return RedirectToAction(nameof(Index));
             }
-            ViewData["ClienteId"] = new SelectList(_context.Clientes, "Id", "Id", carro.ClienteId);
-            return View(carro);
+            ViewData["ClienteId"] = new SelectList(_context.Clientes, "Id", "Id", pedido.ClienteId);
+            return View(pedido);
         }
 
+        // GET: Pedido/Delete/5
         public async Task<IActionResult> Delete(int? id)
         {
-            if (id == null || _context.Carros == null)
+            if (id == null || _context.Pedidos == null)
             {
                 return NotFound();
             }
 
-            var carro = await _context.Carros
-                .Include(c => c.Cliente)
+            var pedido = await _context.Pedidos
+                .Include(p => p.Cliente)
                 .FirstOrDefaultAsync(m => m.Id == id);
-            if (carro == null)
+            if (pedido == null)
             {
                 return NotFound();
             }
 
-            return View(carro);
+            return View(pedido);
         }
 
+        // POST: Pedido/Delete/5
         [HttpPost, ActionName("Delete")]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> DeleteConfirmed(int id)
         {
-            if (_context.Carros == null)
+            if (_context.Pedidos == null)
             {
-                return Problem("Entity set 'GERVEICULOSContext.Carros'  is null.");
+                return Problem("Entity set 'GERVEICULOSContext.Pedidos'  is null.");
             }
-            var carro = await _context.Carros.FindAsync(id);
-            if (carro != null)
+            var pedido = await _context.Pedidos.FindAsync(id);
+            if (pedido != null)
             {
-                _context.Carros.Remove(carro);
+                _context.Pedidos.Remove(pedido);
             }
             
             await _context.SaveChangesAsync();
             return RedirectToAction(nameof(Index));
         }
 
-        private bool CarroExists(int id)
+        private bool PedidoExists(int id)
         {
-          return (_context.Carros?.Any(e => e.Id == id)).GetValueOrDefault();
+          return (_context.Pedidos?.Any(e => e.Id == id)).GetValueOrDefault();
         }
     }
 }

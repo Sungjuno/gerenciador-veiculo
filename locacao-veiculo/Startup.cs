@@ -15,7 +15,7 @@ namespace locacao_veiculo
         // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
         {
-            var conexao = Environment.GetEnvironmentVariable("Server=localhost;Database=GERVEICULOS;Uid=root;Pwd=sung87ju");
+            var conexao = Environment.GetEnvironmentVariable("DATABASE_URL");
             if (conexao == null) conexao = Configuration.GetConnectionString("conexao");
 
             services.AddDbContext<GERVEICULOSContext>(options =>
